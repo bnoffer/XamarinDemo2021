@@ -44,9 +44,9 @@ namespace XamarinDemo2021.ViewModels
             try
             {
                 var item = await DataStore.GetItemAsync(itemId);
-                Id = item.Id;
-                Text = item.Text;
-                Description = item.Description;
+                Id = item.id + "";
+                Text = item.name;
+                Description = item.description;
             }
             catch (Exception)
             {

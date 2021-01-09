@@ -1,33 +1,37 @@
-﻿using System;
+﻿// -----------------------------------------------------------------
+//    Class:		ItemsViewModel.cs
+//    Description:	<Description>
+//    Author:		Bastian Noffer <b.noffer@mac.com>	Date: 09.01.2021
+//    Copyright:	©2021 Bastian Noffer
+// -----------------------------------------------------------------
+
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-using XamarinDemo2021.Models;
+using XamarinDemo2021.Shared.Models;
 using XamarinDemo2021.Views;
 
 namespace XamarinDemo2021.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
+        private Product _selectedItem;
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<Product> Items { get; }
         public Command LoadItemsCommand { get; }
-        public Command AddItemCommand { get; }
-        public Command<Item> ItemTapped { get; }
+        public Command<Product> ItemTapped { get; }
 
         public ItemsViewModel()
         {
             Title = "Browse";
-            Items = new ObservableCollection<Item>();
+            Items = new ObservableCollection<Product>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
-
-            AddItemCommand = new Command(OnAddItem);
+            ItemTapped = new Command<Product>(OnItemSelected);
         }
 
         async Task ExecuteLoadItemsCommand()
@@ -59,7 +63,7 @@ namespace XamarinDemo2021.ViewModels
             SelectedItem = null;
         }
 
-        public Item SelectedItem
+        public Product SelectedItem
         {
             get => _selectedItem;
             set
@@ -69,18 +73,13 @@ namespace XamarinDemo2021.ViewModels
             }
         }
 
-        private async void OnAddItem(object obj)
-        {
-            await Shell.Current.GoToAsync(nameof(NewItemPage));
-        }
-
-        async void OnItemSelected(Item item)
+        async void OnItemSelected(Product item)
         {
             if (item == null)
                 return;
 
             // This will push the ItemDetailPage onto the navigation stack
-            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.id}");
         }
     }
 }

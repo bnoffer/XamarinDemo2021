@@ -5,14 +5,14 @@ using System.Runtime.CompilerServices;
 
 using Xamarin.Forms;
 
-using XamarinDemo2021.Models;
+using XamarinDemo2021.Shared.Models;
 using XamarinDemo2021.Services;
 
 namespace XamarinDemo2021.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<Product> DataStore => DependencyService.Get<IDataStore<Product>>();
 
         bool isBusy = false;
         public bool IsBusy
