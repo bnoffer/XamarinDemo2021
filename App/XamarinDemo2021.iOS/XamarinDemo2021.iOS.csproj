@@ -135,5 +135,11 @@
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XamarinDemo2021\XamarinDemo2021.csproj">
+      <Project>{56088EDE-271B-4CE9-9261-F2D00F77E98A}</Project>
+      <Name>XamarinDemo2021</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
