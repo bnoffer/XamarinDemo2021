@@ -8,17 +8,34 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace XamarinDemo2021.Logging
 {
     public class HttpLoggingHandler : DelegatingHandler
     {
+        public static HttpClientHandler GetHttpClientHandler()
+        {
+#if DEBUG
+            switch (Device.RuntimePlatform)
+            {
+                case Device.Android:
+                    return DependencyService.Get<Services.IHTTPClientHandlerCreationService>().GetInsecureHandler();
+                default:
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    return new HttpClientHandler();
+            }
+#else
+            return new HttpClientHandler();
+#endif
+        }
         public HttpLoggingHandler(HttpMessageHandler innerHandler = null)
-            : base(innerHandler ?? new HttpClientHandler())
+            : base(innerHandler ?? GetHttpClientHandler())
         { }
         async protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

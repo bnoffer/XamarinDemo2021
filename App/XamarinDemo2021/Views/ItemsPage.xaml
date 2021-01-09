@@ -3,35 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="XamarinDemo2021.Views.ItemsPage"
              Title="{Binding Title}"
-             xmlns:local="clr-namespace:XamarinDemo2021.ViewModels"  
-             xmlns:model="clr-namespace:XamarinDemo2021.Shared.Models;assembly=XamarinDemo2021.Shared"
+             xmlns:local="clr-namespace:XamarinDemo2021.ViewModels"
+             xmlns:views="clr-namespace:XamarinDemo2021.Views"
              x:Name="BrowseItemsPage">
 
-    <RefreshView x:DataType="local:ItemsViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <CollectionView x:Name="ItemsListView"
-                ItemsSource="{Binding Items}"
-                SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout Padding="10" x:DataType="model:Product">
-                        <Label Text="{Binding name}" 
-                            LineBreakMode="NoWrap" 
-                            Style="{DynamicResource ListItemTextStyle}" 
-                            FontSize="16" />
-                        <Label Text="{Binding description}" 
-                            LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="13" />
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                NumberOfTapsRequired="1"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=ItemTapped}"		
-                                CommandParameter="{Binding .}">
-                            </TapGestureRecognizer>
-                        </StackLayout.GestureRecognizers>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </RefreshView>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <ContentView Grid.Row="0" Padding="5">
+            <CollectionView x:Name="TopFilterView"
+                            ItemsLayout="HorizontalList"
+                            ItemsSource="{Binding Filters}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Button Text="{Binding .}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=FilterTapped}"		
+                                CommandParameter="{Binding .}"
+                                Margin="5"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ContentView>
+
+        <ContentView Grid.Row="1">
+            <StackLayout Padding="10">
+                <Label x:Name="HeaderTitleLabel"
+                       FontAttributes="Bold"
+                       FontSize="Title"
+                       Text="{Binding HeaderTitle}" />
+
+                <Label x:Name="HeaderSubitleLabel"
+                       FontSize="Subtitle"
+                       Text="{Binding HeaderSubtitle}" />
+            </StackLayout>
+        </ContentView>
+
+        <RefreshView x:DataType="local:ItemsViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Grid.Row="2">
+            <CollectionView x:Name="ItemsListView"
+                    ItemsSource="{Binding Items}"
+                    SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <views:ListItemView />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ContentView Grid.Row="3" Padding="5">
+            <CollectionView x:Name="BottomFilterView"
+                            ItemsLayout="HorizontalList"
+                            ItemsSource="{Binding Filters}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Button Text="{Binding .}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=FilterTapped}"		
+                                CommandParameter="{Binding .}"
+                                Margin="5"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ContentView>
+    </Grid>
 </ContentPage>

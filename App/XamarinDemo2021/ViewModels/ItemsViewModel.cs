@@ -6,12 +6,17 @@
 // -----------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
+using XamarinDemo2021.Models;
 using XamarinDemo2021.Shared.Models;
 using XamarinDemo2021.Views;
 
@@ -19,20 +24,55 @@ namespace XamarinDemo2021.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
+        #region Private fields
+
         private Product _selectedItem;
+        private IEnumerable<Product> _allProducts;
+        private List<int> _favorites;
+
+        private string _headerTitle;
+        private string _headerSubtitle;
+
+        #endregion
+
+        #region Properties
 
         public ObservableCollection<Product> Items { get; }
+        public ObservableCollection<string> Filters { get; }
         public Command LoadItemsCommand { get; }
         public Command<Product> ItemTapped { get; }
+        public Command<string> FilterTapped { get; }
+
+        public string HeaderTitle
+        {
+            get { return _headerTitle; }
+            set { SetProperty(ref _headerTitle, value); }
+        }
+
+        public string HeaderSubtitle
+        {
+            get { return _headerSubtitle; }
+            set { SetProperty(ref _headerSubtitle, value); }
+        }
+
+        #endregion
+
+        #region Ctor
 
         public ItemsViewModel()
         {
+            _favorites = new List<int>();
+
             Title = "Browse";
             Items = new ObservableCollection<Product>();
+            Filters = new ObservableCollection<string>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
-
+            
             ItemTapped = new Command<Product>(OnItemSelected);
+            FilterTapped = new Command<string>(OnFilterSelected);
         }
+
+        #endregion
 
         async Task ExecuteLoadItemsCommand()
         {
@@ -41,11 +81,22 @@ namespace XamarinDemo2021.ViewModels
             try
             {
                 Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                Filters.Clear();
+                _allProducts = await DataStore.GetItemsAsync(true);
+                foreach (var item in _allProducts)
                 {
                     Items.Add(item);
                 }
+
+                var filters = await DataStore.GetFiltersAsync();
+                foreach (var filter in filters)
+                {
+                    Filters.Add(filter);
+                }
+
+                var header = await DataStore.GetInfoAsync();
+                HeaderTitle = header.headerTitle;
+                HeaderSubtitle = header.headerDescription;
             }
             catch (Exception ex)
             {
@@ -61,6 +112,13 @@ namespace XamarinDemo2021.ViewModels
         {
             IsBusy = true;
             SelectedItem = null;
+
+            LoadFavorites();
+        }
+
+        public void OnDisappearing()
+        {
+            SaveFavorites();
         }
 
         public Product SelectedItem
@@ -80,6 +138,60 @@ namespace XamarinDemo2021.ViewModels
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={item.id}");
+        }
+
+        void OnFilterSelected(string filter)
+        {
+            if (string.IsNullOrEmpty(filter))
+                return;
+
+            Items.Clear();
+
+            if (filter.Equals("Alle"))
+            {
+                foreach (var item in _allProducts)
+                {
+                    Items.Add(item);
+                }
+            }
+            else if (filter.Equals("Verfügbar"))
+            {
+                foreach (var item in _allProducts)
+                {
+                    if (item.available)
+                        Items.Add(item);
+                }
+            }
+            else if (filter.Equals("Vorgemerkt"))
+            {
+                foreach (var item in _allProducts)
+                {
+                    if (_favorites.Contains(item.id))
+                        Items.Add(item);
+                }
+            }
+        }
+
+        void LoadFavorites()
+        {
+            if (Preferences.ContainsKey("my_favorites"))
+            {
+                var favoritesPrefs = Preferences.Get("my_favorites", "");
+                var model = JsonConvert.DeserializeObject<FavoritesModel>(favoritesPrefs);
+
+                _favorites.Clear();
+                if (model.FavoriteIds != null)
+                {
+                    foreach (var favorite in model.FavoriteIds)
+                        _favorites.Add(favorite);
+                }
+            }
+        }
+
+        void SaveFavorites()
+        {
+            var favoritesPrefs = JsonConvert.SerializeObject(new FavoritesModel(_favorites));
+            Preferences.Set("my_favorites", favoritesPrefs);
         }
     }
 }

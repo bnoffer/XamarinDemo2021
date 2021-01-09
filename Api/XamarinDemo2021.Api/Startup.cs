@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using XamarinDemo2021.Api.Services;
 
 namespace XamarinDemo2021.Api
 {
@@ -26,6 +27,7 @@ namespace XamarinDemo2021.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            LocalDataStore.Instance.LoadLocalData();
         }
 
         public IConfiguration Configuration { get; }

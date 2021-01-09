@@ -14,6 +14,6 @@
     </resheader>
     
     <data name="BaseUrl">
-        <value>https://localhost:59860</value>
+        <value>https://localhost:5001</value>
     </data>
 </root>

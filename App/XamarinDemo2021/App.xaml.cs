@@ -22,7 +22,6 @@ namespace XamarinDemo2021
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
             MainPage = new AppShell();
         }
 
