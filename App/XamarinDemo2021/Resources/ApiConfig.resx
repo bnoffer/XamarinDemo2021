@@ -13,7 +13,12 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     
-    <data name="BaseUrl">
+    <data name="AndroidBaseUrl">
+        <value>https://10.0.2.2:5001</value>
+        <comment>Url for use with Android Emulator</comment>
+    </data>
+    <data name="iOSBaseUrl">
         <value>https://localhost:5001</value>
+        <comment>Url for use with iOS Simulator</comment>
     </data>
 </root>

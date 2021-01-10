@@ -7,7 +7,7 @@
 using System;
 using System.Net.Http;
 
-namespace XamarinDemo2021.Services
+namespace XamarinDemo2021.Interfaces
 {
     public interface IHTTPClientHandlerCreationService
     {

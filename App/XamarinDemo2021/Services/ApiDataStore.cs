@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using XamarinDemo2021.Abstractions;
@@ -14,6 +15,7 @@ using XamarinDemo2021.Shared.Models;
 using Microsoft.AppCenter.Crashes;
 using Polly;
 using Refit;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(XamarinDemo2021.Services.ApiDataStore))]
@@ -37,6 +39,11 @@ namespace XamarinDemo2021.Services
         /// Last time data was fetched
         /// </summary>
         private DateTime _timestamp;
+
+        /// <summary>
+        /// API base url based on runtime platform
+        /// </summary>
+        private string _baseUrl;
 
         #endregion
 
@@ -62,6 +69,12 @@ namespace XamarinDemo2021.Services
         /// </summary>
         public ApiDataStore()
         {
+            if (Device.RuntimePlatform == Device.Android)
+                _baseUrl = Resources.ApiConfig.AndroidBaseUrl;
+            else if (Device.RuntimePlatform == Device.iOS)
+                _baseUrl = Resources.ApiConfig.iOSBaseUrl;
+            else
+                _baseUrl = Resources.ApiConfig.iOSBaseUrl;
         }
 
         #endregion
@@ -78,9 +91,17 @@ namespace XamarinDemo2021.Services
             throw new NotImplementedException();
         }
 
-        public Task<Product> GetItemAsync(string id)
+        public async Task<Product> GetItemAsync(string id)
         {
-            throw new NotImplementedException();
+            if (RequiresRefresh)
+                _data = await Get();
+
+            if (_data == null)
+                return null;
+
+            var searchId = int.Parse(id);
+
+            return _data.products.Where(p => (p.id == searchId)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<Product>> GetItemsAsync(bool forceRefresh = false)
@@ -141,7 +162,7 @@ namespace XamarinDemo2021.Services
             var tag = this + ".FeedGET";
             try
             {
-                var apiResponse = GetRestService<IApiEndpoints>(Resources.ApiConfig.BaseUrl);
+                var apiResponse = GetRestService<IApiEndpoints>(_baseUrl);
 
                 PolicyResult<ApiResponse<DataModel>> pollyResult = null;
 

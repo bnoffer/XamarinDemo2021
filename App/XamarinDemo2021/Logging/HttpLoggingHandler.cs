@@ -25,7 +25,7 @@ namespace XamarinDemo2021.Logging
             switch (Device.RuntimePlatform)
             {
                 case Device.Android:
-                    return DependencyService.Get<Services.IHTTPClientHandlerCreationService>().GetInsecureHandler();
+                    return DependencyService.Get<Interfaces.IHTTPClientHandlerCreationService>().GetInsecureHandler();
                 default:
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     return new HttpClientHandler();

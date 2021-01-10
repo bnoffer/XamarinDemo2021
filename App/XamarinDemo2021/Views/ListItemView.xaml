@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms"
               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+              xmlns:ffimageloadingsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
               xmlns:local="clr-namespace:XamarinDemo2021.ViewModels"
               xmlns:model="clr-namespace:XamarinDemo2021.Shared.Models;assembly=XamarinDemo2021.Shared"
+              xmlns:views="clr-namespace:XamarinDemo2021.Views"
               x:Class="XamarinDemo2021.Views.ListItemView"
               x:DataType="model:Product">
                     <Grid x:Name="ItemGrid">
@@ -15,7 +16,7 @@
                             <ColumnDefinition x:Name="RightColumn" Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <ffimageloading:CachedImage x:Name="ItemImage"
+                        <ffimageloadingsvg:SvgCachedImage x:Name="ItemImage"
                                                     Source="{Binding imageURL}"
                                                     HeightRequest="100"
                                                     WidthRequest="100"/>
@@ -26,9 +27,33 @@
                                 Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="16" />
                             <Label Text="{Binding description}" 
-                                LineBreakMode="WordWrap"
+                                LineBreakMode="TailTruncation"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="13" />
+
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="Price:" 
+                                       LineBreakMode="NoWrap"
+                                       IsVisible="{Binding available}"
+                                       FontAttributes="Bold"
+                                       Style="{DynamicResource ListItemDetailTextStyle}"
+                                       FontSize="13"
+                                       HorizontalOptions="Start" />
+                                <Label Text="{Binding price.value}" 
+                                       LineBreakMode="NoWrap"
+                                       IsVisible="{Binding available}"
+                                       Style="{DynamicResource ListItemDetailTextStyle}"
+                                       FontSize="13"
+                                       HorizontalOptions="Start" />
+                                <Label Text="{Binding price.currency}" 
+                                       LineBreakMode="NoWrap"
+                                       IsVisible="{Binding available}"
+                                       Style="{DynamicResource ListItemDetailTextStyle}"
+                                       FontSize="13"
+                                       HorizontalOptions="Start" />
+                                <views:StarRatingView StarRating="{Binding rating}" />
+                            </StackLayout>
+
                             <StackLayout.GestureRecognizers>
                                 <TapGestureRecognizer 
                                     NumberOfTapsRequired="1"

@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
-using XamarinDemo2021.ViewModels;
 using XamarinDemo2021.Shared.Models;
+using Microsoft.AppCenter.Crashes;
 
 namespace XamarinDemo2021.Views
 {
@@ -21,23 +21,37 @@ namespace XamarinDemo2021.Views
 
         protected override void OnBindingContextChanged()
         {
-            base.OnBindingContextChanged();
-
-            var item = BindingContext as Product;
-
-            if (item.available)
+            try
             {
-                LeftColumn.Width = new GridLength(100.0);
-                RightColumn.Width = GridLength.Star;
-                Grid.SetColumn(ItemImage, 0);
-                Grid.SetColumn(ItemInformation, 1);
+                base.OnBindingContextChanged();
+
+                var item = BindingContext as Product;
+
+                if (!string.IsNullOrEmpty(item.colorCode))
+                {
+                    var dict = new Dictionary<string, string>();
+                    dict.Add("stroke:#000000", $"stroke:#{item.colorCode}");
+                    ItemImage.ReplaceStringMap = dict;
+                }
+
+                if (item.available)
+                {
+                    LeftColumn.Width = new GridLength(100.0);
+                    RightColumn.Width = GridLength.Star;
+                    Grid.SetColumn(ItemImage, 0);
+                    Grid.SetColumn(ItemInformation, 1);
+                }
+                else
+                {
+                    LeftColumn.Width = GridLength.Star;
+                    RightColumn.Width = new GridLength(100.0);
+                    Grid.SetColumn(ItemImage, 1);
+                    Grid.SetColumn(ItemInformation, 0);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                LeftColumn.Width = GridLength.Star;
-                RightColumn.Width = new GridLength(100.0);
-                Grid.SetColumn(ItemImage, 1);
-                Grid.SetColumn(ItemInformation, 0);
+                Crashes.TrackError(ex);
             }
         }
     }

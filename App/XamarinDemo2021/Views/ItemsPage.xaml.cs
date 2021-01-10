@@ -1,14 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿// -----------------------------------------------------------------
+//    Class:		ItemsPage.xaml.cs
+//    Description:	<Description>
+//    Author:		Bastian Noffer <b.noffer@mac.com>	Date: 10.01.2021
+//    Copyright:	©2021 Bastian Noffer
+// -----------------------------------------------------------------
 
-using XamarinDemo2021.Models;
-using XamarinDemo2021.Views;
+using Xamarin.Forms;
 using XamarinDemo2021.ViewModels;
 
 namespace XamarinDemo2021.Views

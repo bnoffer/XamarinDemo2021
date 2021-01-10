@@ -30,8 +30,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\images\01.svg" />
+    <Content Remove="wwwroot\images\08.svg" />
   </ItemGroup>
 </Project>

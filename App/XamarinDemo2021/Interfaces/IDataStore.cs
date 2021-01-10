@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XamarinDemo2021.Shared.Models;
 
-namespace XamarinDemo2021.Services
+namespace XamarinDemo2021.Interfaces
 {
     public interface IDataStore<T>
     {

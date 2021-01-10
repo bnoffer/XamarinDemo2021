@@ -9,10 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -74,6 +73,35 @@ namespace XamarinDemo2021.ViewModels
 
         #endregion
 
+        #region Public methods
+
+        public void OnAppearing()
+        {
+            IsBusy = true;
+            SelectedItem = null;
+
+            LoadFavorites();
+        }
+
+        public void OnDisappearing()
+        {
+            SaveFavorites();
+        }
+
+        public Product SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+                OnItemSelected(value);
+            }
+        }
+
+        #endregion
+
+        #region Private methods
+
         async Task ExecuteLoadItemsCommand()
         {
             IsBusy = true;
@@ -100,34 +128,11 @@ namespace XamarinDemo2021.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                Crashes.TrackError(ex);
             }
             finally
             {
                 IsBusy = false;
-            }
-        }
-
-        public void OnAppearing()
-        {
-            IsBusy = true;
-            SelectedItem = null;
-
-            LoadFavorites();
-        }
-
-        public void OnDisappearing()
-        {
-            SaveFavorites();
-        }
-
-        public Product SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                SetProperty(ref _selectedItem, value);
-                OnItemSelected(value);
             }
         }
 
@@ -174,24 +179,40 @@ namespace XamarinDemo2021.ViewModels
 
         void LoadFavorites()
         {
-            if (Preferences.ContainsKey("my_favorites"))
+            try
             {
-                var favoritesPrefs = Preferences.Get("my_favorites", "");
-                var model = JsonConvert.DeserializeObject<FavoritesModel>(favoritesPrefs);
-
-                _favorites.Clear();
-                if (model.FavoriteIds != null)
+                if (Preferences.ContainsKey("my_favorites"))
                 {
-                    foreach (var favorite in model.FavoriteIds)
-                        _favorites.Add(favorite);
+                    var favoritesPrefs = Preferences.Get("my_favorites", "");
+                    var model = JsonConvert.DeserializeObject<FavoritesModel>(favoritesPrefs);
+
+                    _favorites.Clear();
+                    if (model.FavoriteIds != null)
+                    {
+                        foreach (var favorite in model.FavoriteIds)
+                            _favorites.Add(favorite);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
 
         void SaveFavorites()
         {
-            var favoritesPrefs = JsonConvert.SerializeObject(new FavoritesModel(_favorites));
-            Preferences.Set("my_favorites", favoritesPrefs);
+            try
+            {
+                var favoritesPrefs = JsonConvert.SerializeObject(new FavoritesModel(_favorites));
+                Preferences.Set("my_favorites", favoritesPrefs);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
+
+        #endregion
     }
 }

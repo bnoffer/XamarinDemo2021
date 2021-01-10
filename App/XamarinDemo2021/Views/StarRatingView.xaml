@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:XamarinDemo2021.Views"
+             x:Class="XamarinDemo2021.Views.StarRatingView">
+    <ContentView.Content>
+        <CollectionView x:Name="StarsCollection"
+                        ItemsLayout="HorizontalList"
+                        SelectionMode="None"
+                        HeightRequest="13"
+                        WidthRequest="60">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <views:StarImageView />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </ContentView.Content>
+</ContentView>

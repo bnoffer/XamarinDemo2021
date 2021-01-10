@@ -1,4 +1,11 @@
-﻿using System;
+﻿// -----------------------------------------------------------------
+//    Class:		BaseViewModel.cs
+//    Description:	<Description>
+//    Author:		Bastian Noffer <b.noffer@mac.com>	Date: 10.01.2021
+//    Copyright:	©2021 Bastian Noffer
+// -----------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -6,26 +13,33 @@ using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
 using XamarinDemo2021.Shared.Models;
-using XamarinDemo2021.Services;
+using XamarinDemo2021.Interfaces;
 
 namespace XamarinDemo2021.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Product> DataStore => DependencyService.Get<IDataStore<Product>>();
+        #region Private fields
 
-        bool isBusy = false;
+        private bool _isBusy = false;
+        private string _title = string.Empty;
+
+        #endregion
+
+        #region Properties
+
+        public IDataStore<Product> DataStore => DependencyService.Get<IDataStore<Product>>();
+        
         public bool IsBusy
         {
-            get { return isBusy; }
-            set { SetProperty(ref isBusy, value); }
+            get { return _isBusy; }
+            set { SetProperty(ref _isBusy, value); }
         }
 
-        string title = string.Empty;
         public string Title
         {
-            get { return title; }
-            set { SetProperty(ref title, value); }
+            get { return _title; }
+            set { SetProperty(ref _title, value); }
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,
@@ -40,6 +54,8 @@ namespace XamarinDemo2021.ViewModels
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        #endregion
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
